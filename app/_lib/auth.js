@@ -29,7 +29,6 @@ const authConfig = {
       const guest = await getGuest(session.user.email);
 
       session.user.guestId = guest.id;
-      console.log(session);
       return session;
     },
   },
