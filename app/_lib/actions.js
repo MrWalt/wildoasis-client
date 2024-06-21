@@ -5,10 +5,13 @@ import { auth, signIn, signOut } from "./auth";
 import { supabase } from "./supabase";
 import { getBookings } from "./data-service";
 import { redirect } from "next/navigation";
+import { addDays } from "date-fns";
 
 export async function createBooking(bookingData, formData) {
   const session = await auth();
   if (!session) throw new Error("You must be logged in");
+  const startDate = addDays(bookingData.startDate, 1);
+  const endDate = addDays(bookingData.endDate, 1);
 
   const newBooking = {
     ...bookingData,
@@ -20,6 +23,8 @@ export async function createBooking(bookingData, formData) {
     isPaid: false,
     hasBreakfast: false,
     status: "unconfirmed",
+    startDate,
+    endDate,
   };
 
   const { error } = await supabase.from("bookings").insert([newBooking]);
