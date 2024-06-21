@@ -4,6 +4,44 @@ import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth";
 import { supabase } from "./supabase";
 import { getBookings } from "./data-service";
+import { redirect } from "next/navigation";
+
+export async function editReservation(formData) {
+  const bookingId = Number(formData.get("bookingId"));
+
+  // 1. Authentication
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in");
+
+  // 2. Authorization
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+
+  if (!guestBookingIds.includes(bookingId))
+    throw new Error("You are not allowed to edit this reservation");
+
+  // 3. Creating the data
+  const updatedFields = {
+    observations: formData.get("observations").slice(0, 500),
+    numGuests: Number(formData.get("numGuests")),
+  };
+
+  // 4. Mutating data on the server
+  const { error } = await supabase
+    .from("bookings")
+    .update(updatedFields)
+    .eq("id", bookingId);
+
+  // 5. Error handling
+  if (error) throw new Error("Booking could not be updated");
+
+  // 6. Revladiation
+  revalidatePath(`/account/reservations`);
+  revalidatePath(`/account/reservations/edit/${bookingId}`);
+
+  // 7. Redirecting
+  redirect("/account/reservations");
+}
 
 export async function updateProfile(formData) {
   const session = await auth();

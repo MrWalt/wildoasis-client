@@ -3,6 +3,7 @@
 import { updateProfile } from "../_lib/actions";
 import { useFormStatus } from "react-dom";
 import SpinnerMini from "./SpinnerMini";
+import SubmitButton from "./SubmitButton";
 
 export default function UpdateProfileForm({ children, guest }) {
   const { fullName, nationality, email, nationalID, countryFlag } = guest;
@@ -59,23 +60,23 @@ export default function UpdateProfileForm({ children, guest }) {
       </div>
 
       <div className="flex justify-end items-center gap-6">
-        <Button />
+        <SubmitButton pendingLabel="Updating...">Update profile</SubmitButton>
       </div>
     </form>
   );
 }
 
-function Button() {
-  const { pending } = useFormStatus();
+// function Button() {
+//   const { pending } = useFormStatus();
 
-  return (
-    <button
-      className={`bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300 ${
-        pending ? "w-[185px] h-[60px] flex justify-center align-center" : ""
-      }`}
-      disabled={pending}
-    >
-      {pending ? <SpinnerMini /> : "Update profile"}
-    </button>
-  );
-}
+//   return (
+//     <button
+//       className={`bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300 ${
+//         pending ? "w-[185px] h-[60px] flex justify-center align-center" : ""
+//       }`}
+//       disabled={pending}
+//     >
+//       {pending ? <SpinnerMini /> : "Update profile"}
+//     </button>
+//   );
+// }
